@@ -1,19 +1,19 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  font-size: 20px;
+body{
+  background-color: #bcbbbb21 !important;
 }
-
 * {
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   padding: 0;
   margin: 0;
 }
 
 form {
-  width: 50%;
+  width: 40%;
   margin: auto;
+
+  .form-control{
+    background-color: #e3e3e300;
+  }
 }
 
 .heading {

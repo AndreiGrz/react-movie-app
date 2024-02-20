@@ -27,7 +27,7 @@ const Login = () => {
 
     return (
     <div className="login">
-        <h2 className="heading">Login Page</h2>
+        <h2 className="heading">Log In</h2>
         <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="username">
                 <Form.Label>Username</Form.Label>
@@ -37,9 +37,11 @@ const Login = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Enter your password" name="password" value={state.password} onChange={handleChange} />
             </Form.Group>
-            <Button variant="dark" type="submit">Login</Button>
-            <div className="mt-2">
-                Don't have an account? <Link to={"/register"}>Register here</Link>!
+            <div className="submit-section">
+                <Button variant="dark" type="submit">Login</Button>
+            </div>
+            <div className="mt-4">
+                Don't have an account? <Link className="link" to={"/register"}>Register here</Link>!
             </div>
         </Form>
     </div>

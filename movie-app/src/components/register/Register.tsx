@@ -8,48 +8,127 @@ type RegistrationForm = {
     password: string;
     passwordConfirmation: string;
 }
+interface ErrorsModel {
+    username?: string;
+    password?: string;
+    passwordConfirmation?: string;
+}
+const initialFormState: RegistrationForm = {
+    username: '',
+    password: '',
+    passwordConfirmation: ''
+};
 
 const Register = () => {
-    const [state, setState] = useState({
-        username: '',
-        password: '',
-        passwordConfirmation: ''
-    });
-
-    const handleChange = (event: any) =>{
-        const {name, value} = event.target;
-        setState(({
-            ...state,
-            [name]: value
-        }));
-        // console.log({name, value});
+    const [form, setForm] = useState<RegistrationForm>(initialFormState);
+    const [errors, setErrors] = useState<ErrorsModel>({});
+    
+    const setField = (field: keyof RegistrationForm, value: any) =>{
+        setForm({
+            ...form,
+            [field]: value
+        })
+        
+        if(!!errors[field]){
+            setErrors({
+                ...errors,
+                [field]: null
+            })
+        }
     }
 
-    const handleSubmit = (event: any) => {
-        event?.preventDefault(); //prevent refreshing
-        console.log('state', state)
+    const validateForm = () =>{
+        const newErrors: any = {};
+
+        if(!form.username || form.username === ''){
+            newErrors.username = 'Please fill in a username!'
+        } else if(form.username && form.username.length < 4){
+            newErrors.username = 'Username must have at least 4 characters'
+        }
+
+        if(!form.password || form.password === ''){
+            newErrors.password = 'Please fill in a password!'
+        } else{
+            const passRegex = /^(?=.*\d)(?=.*[A-Z])(?=.*\W).+$/;
+            if (!passRegex.test(form.password)) {
+                newErrors.password = 'Password must contain at least one number, one capital letter, and one symbol!';
+            }
+        }
+
+        if(form.password && (!form.passwordConfirmation || form.passwordConfirmation === '')){
+            newErrors.passwordConfirmation = 'Please confirm your password!'
+        } 
+        
+        if (form.password !== form.passwordConfirmation) {
+            newErrors.passwordConfirmation = 'Your passwords don\'t match. Please try again.';
+        }
+
+        return newErrors;
+
     }
 
+    const handleSubmit = (e: { preventDefault: () => void; }) =>{
+        e.preventDefault();
+        const formErrors = validateForm();
+        if(Object.keys(formErrors).length > 0){
+            setErrors(formErrors);
+        }else{
+            console.log("Form submitted!");
+            console.log(form);
+        }
+    }
 
     return (
     <div className="register">
-        <h2 className="heading">Register Page</h2>
-        <Form onSubmit={handleSubmit}>
+        <h2 className="heading">Create an Account</h2>
+        <Form>
             <Form.Group className="mb-3" controlId="username">
                 <Form.Label>Username</Form.Label>
-                <Form.Control type="text" placeholder="Enter your username" name='username' value={state.username} onChange={handleChange}/>
+                <Form.Control
+                 type="text"
+                 placeholder="Enter your username" 
+                 name='username'
+                 value={form.username}
+                 onChange={(e) => setField('username', e.target.value)}
+                 isInvalid={!!errors.username}
+                />
+                <Form.Control.Feedback type="invalid">
+                    {errors.username}
+                </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="password">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Enter your password" name='password' value={state.password} onChange={handleChange} />
+                <Form.Control 
+                 type="password" 
+                 placeholder="Enter your password" 
+                 name='password'
+                 value={form.password}
+                 onChange={(e) => setField('password', e.target.value)}
+                 isInvalid={!!errors.password}
+                />
+            <Form.Control.Feedback type="invalid">
+                {errors.password}
+            </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="passwordConfirmation">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" placeholder="Confirm your password" name='passwordConfirmation' value={state.passwordConfirmation} onChange={handleChange} />
+                <Form.Control 
+                 type="password" 
+                 placeholder="Confirm your password" 
+                 name='passwordConfirmation'
+                 value={form.passwordConfirmation}
+                 onChange={(e) => setField('passwordConfirmation', e.target.value)}
+                 isInvalid={!!errors.passwordConfirmation}
+                />
+            <Form.Control.Feedback type="invalid">
+                {errors.passwordConfirmation}
+            </Form.Control.Feedback>
             </Form.Group>
-            <Button variant="dark" type="submit">Register</Button>
-            <div className="mt-2">
-                Already have an account? <Link to={"/login"}>Login here</Link>!
+            <div className="submit-section">
+                <Button variant="dark" type="submit" onClick={handleSubmit}>Register</Button>
+            </div>
+            <div className="mt-4">
+                Already have an account? <Link className="link" to={"/login"}>Login here</Link>!
             </div>
         </Form>
     </div>

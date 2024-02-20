@@ -21,7 +21,7 @@ const Header = () => {
                 </Link>
             </div>
             <div className="right">
-                <Link to="/profile" className="nav-link">Welcome, Guest</Link>
+                <i className="bi bi-person"></i><Link to="/profile" className="nav-link">Welcome, Guest</Link>
             </div>
           </Nav>
         </Container>
