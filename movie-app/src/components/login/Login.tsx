@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import './logins.scss'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Alert from 'react-bootstrap/Alert';
+
 
 
 const Login = () => {
@@ -10,6 +12,7 @@ const Login = () => {
         username: '',
         password: ''
     });
+    const navigate = useNavigate();
 
     const handleChange = (event: any) =>{
         const {name, value} = event.target;
@@ -17,12 +20,33 @@ const Login = () => {
             ...state,
             [name]: value
         }));
-        // console.log({name, value});
     }
 
     const handleSubmit = (event: any) => {
-        event?.preventDefault(); //prevent refreshing
+        event?.preventDefault();
         console.log('state', state)
+        sendDataToServer();
+    }
+
+    const sendDataToServer = (): void =>{
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: state.username, password: state.password })
+        };
+        fetch('http://localhost:8080/auth/login', requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                console.log('User successfully created', data);
+                setState({
+                    username: '',
+                    password: '',
+                });
+                navigate('/dashboard');
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }
 
     return (

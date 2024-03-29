@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import './register.scss'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type RegistrationForm = {
     username: string;
@@ -22,6 +22,7 @@ const initialFormState: RegistrationForm = {
 const Register = () => {
     const [form, setForm] = useState<RegistrationForm>(initialFormState);
     const [errors, setErrors] = useState<ErrorsModel>({});
+    const navigate = useNavigate();
     
     const setField = (field: keyof RegistrationForm, value: any) =>{
         setForm({
@@ -75,7 +76,31 @@ const Register = () => {
         }else{
             console.log("Form submitted!");
             console.log(form);
+            sendDataToServer();
+
         }
+    }
+    
+    const sendDataToServer = (): void => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: form.username, password: form.password })
+        };
+        fetch('http://localhost:8080/auth/signup', requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                console.log('User successfully created', data);
+                setForm({
+                    username: '',
+                    password: '',
+                    passwordConfirmation: ''
+                });
+                navigate('/login');
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }
 
     return (
